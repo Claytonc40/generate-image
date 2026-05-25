@@ -1,27 +1,28 @@
 # Fooocus no Google Colab — modelos e downloads
 
-Guia em português para o notebook `fooocus_colab.ipynb`: o que é baixado automaticamente, URLs, presets e uso na interface.
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Claytonc40/generate-image/blob/main/fooocus_colab.ipynb)
+
+Guia em português para o notebook `fooocus_colab.ipynb` no repositório [Claytonc40/generate-image](https://github.com/Claytonc40/generate-image): o que é baixado automaticamente, URLs **apenas HuggingFace** (ou mirrors públicos), presets e uso na interface.
 
 ## Ordem de execução no Colab
 
 | Passo | Célula | O que faz |
 |-------|--------|-----------|
-| 1 | **Configuração** | Define `REPO_URL`, token Civitai, flags de download e preset inicial (`FOOOCUS_PRESET`) |
+| 1 | **Configuração** | Define `REPO_URL`, flags de download e preset inicial (`FOOOCUS_PRESET`) |
 | 2 | **Clone** | `git clone` → `/content/Fooocus`, cria pastas `models/` |
-| 3 | **Download** | Baixa checkpoints, loras e VAE (presets + extras NSFW) |
+| 3 | **Download** | Baixa checkpoints, loras e VAE (presets + extras NSFW) via HuggingFace |
 | 4 | **Iniciar** | `python entry_with_update.py --share --always-high-vram --preset …` |
-| 5 | *(opcional)* | Download manual Civitai (colar URL da API) |
+| 5 | *(opcional)* | Download manual com URL `resolve/main` (ex.: REED, Lustify APEX) |
 
-**Runtime:** GPU (T4 ou superior recomendado). **Disco:** conte o volume total abaixo (~40–70 GB se tudo estiver ativo).
+**Runtime:** GPU (T4 ou superior recomendado). **Disco:** conte o volume total abaixo (~35–60 GB se tudo estiver ativo).
 
 ## Avisos importantes
 
 - **Conteúdo NSFW:** vários checkpoints são explícitos. Use apenas onde for legal e permitido.
-- **Espaço em disco:** cada SDXL pesa ~6–7 GB. O pacote completo (presets Fooocus + 6 extras) pode passar de **50 GB**.
+- **Espaço em disco:** cada SDXL pesa ~6–7 GB. O pacote NSFW automático não inclui REED nem Lustify APEX (sem espelho HF de ficheiro único).
 - **Sessão Colab:** arquivos em `/content` somem ao desligar a sessão — é preciso baixar de novo ou montar Google Drive.
-- **Token Civitai:** crie em [civitai.com/user/account](https://civitai.com/user/account) → API Keys. Alguns modelos exigem login; no notebook use `CIVITAI_TOKEN = "seu_token"` ou variável de ambiente.
-- **bigASP v2.5:** não é SDXL padrão (Flow Matching, só ComfyUI) — **não incluído** no download automático.
-- **Fork:** para usar os presets deste workspace (`pony_v6`, `lustify_v4`, etc.), aponte `REPO_URL` para o seu repositório no GitHub ou faça upload do notebook após push.
+- **Sem Civitai:** o fluxo principal **não** usa token nem URLs `civitai.com`. Downloads inválidos (&lt;100 MB) falham com mensagem clara em vez de “ok 0 GB”.
+- **Repositório:** o notebook clona por padrão `https://github.com/Claytonc40/generate-image.git` (branch `main`), com presets deste workspace (`pony_v6`, `lustify_v4`, etc.).
 
 ## Como escolher o modelo na UI
 
@@ -29,24 +30,24 @@ Guia em português para o notebook `fooocus_colab.ipynb`: o que é baixado autom
 2. No topo, abra o menu **Preset** (ou passe `--preset nome` na célula de início).
 3. Em **Model** / checkpoint, escolha o arquivo `.safetensors` correspondente.
 
-| Preset | Checkpoint principal | Uso |
-|--------|----------------------|-----|
-| `default` | juggernautXL_v8Rundiffusion | Geral / equilíbrio |
-| `realistic` | realisticStockPhoto_v20 | Fotos stock |
-| `anime` | animaPencilXL_v500 | Anime |
-| `pony_v6` | ponyDiffusionV6XL (+ VAE pony) | Anime/hentai estilo Pony |
-| `lustify_v4` | lustifySDXLNSFW_v40Alpha | NSFW realista (Lustify v4) |
-| `juggernaut_v9` | Juggernaut-XL_v9_RunDiffusionPhoto_v2 | Realismo + NSFW |
-| `epicrealism_xl` | epicrealismXL_pureFix | Fotos realistas |
-| `anteros_xxxl` | anterosXXXL_v10 | Photoreal NSFW forte |
-| `reed_illustrious_v12` | reedXXXIllustrious_v120 | Ilustrado / semi-real NSFW |
-| `sai` | sd_xl_base + refiner | SDXL oficial |
-| `playground_v2.5` | playground-v2.5 | Estética Playground |
+| Preset | Checkpoint principal | Download automático |
+|--------|----------------------|---------------------|
+| `default` | juggernautXL_v8Rundiffusion | Sim (HF) |
+| `realistic` | realisticStockPhoto_v20 | Sim (HF) |
+| `anime` | animaPencilXL_v500 | Sim (HF) |
+| `pony_v6` | ponyDiffusionV6XL (+ VAE pony) | Sim (HF) |
+| `lustify_v4` | lustifySDXLNSFW_v40Alpha | Sim (HF, espelho v40) |
+| `juggernaut_v9` | Juggernaut-XL_v9_RunDiffusionPhoto_v2 | Sim (HF) |
+| `epicrealism_xl` | epicrealismXL_pureFix | Sim (HF) |
+| `anteros_xxxl` | anterosXXXL_v10 | Sim (HF) |
+| `reed_illustrious_v12` | reedXXXIllustrious_v120 | **Manual** (sem HF) |
+| `sai` | sd_xl_base + refiner | Sim (HF) |
+| `playground_v2.5` | playground-v2.5 | Sim (HF) |
 
 ## Downloads automáticos — presets Fooocus (oficiais)
 
-| Arquivo | URL |
-|---------|-----|
+| Arquivo | URL HuggingFace |
+|---------|-----------------|
 | juggernautXL_v8Rundiffusion.safetensors | https://huggingface.co/lllyasviel/fav_models/resolve/main/fav/juggernautXL_v8Rundiffusion.safetensors |
 | realisticStockPhoto_v20.safetensors | https://huggingface.co/lllyasviel/fav_models/resolve/main/fav/realisticStockPhoto_v20.safetensors |
 | animaPencilXL_v500.safetensors | https://huggingface.co/mashb1t/fav_models/resolve/main/fav/animaPencilXL_v500.safetensors |
@@ -58,44 +59,45 @@ Guia em português para o notebook `fooocus_colab.ipynb`: o que é baixado autom
 | sd_xl_offset_example-lora_1.0.safetensors *(lora)* | https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/main/sd_xl_offset_example-lora_1.0.safetensors |
 | SDXL_FILM_PHOTOGRAPHY_STYLE_V1.safetensors *(lora)* | https://huggingface.co/mashb1t/fav_models/resolve/main/fav/SDXL_FILM_PHOTOGRAPHY_STYLE_V1.safetensors |
 
-## Downloads automáticos — 6 modelos SDXL solicitados
+## Downloads automáticos — pacote NSFW/realista (6 modelos)
 
-| Modelo | Arquivo no Colab | Fonte | URL direta |
-|--------|------------------|-------|------------|
-| **Lustify v4** | lustifySDXLNSFW_v40Alpha.safetensors | Civitai v4.0 alpha | https://civitai.com/api/download/models/926965 |
-| **Lustify APEX v8** *(opcional)* | lustifySDXLNSFW_apexV8.safetensors | Civitai (mais recente) | https://civitai.com/api/download/models/2808677 |
-| **Juggernaut XL v9** | Juggernaut-XL_v9_RunDiffusionPhoto_v2.safetensors | HuggingFace | https://huggingface.co/RunDiffusion/Juggernaut-XL-v9/resolve/main/Juggernaut-XL_v9_RunDiffusionPhoto_v2.safetensors |
-| **Epic Realism XL** | epicrealismXL_pureFix.safetensors | Civitai Pure_fix | https://civitai.com/api/download/models/2514955 |
-| **Epic VX-FinalKiSS** *(opcional)* | epicrealismXL_vxFinalkiss.safetensors | Civitai | https://civitai.com/api/download/models/1063833 |
-| **Anteros XXXL** | anterosXXXL_v10.safetensors | HF → fallback Civitai | https://huggingface.co/rosamelanopex/ModelsXL/resolve/e4d1f2bd7fd3078313bc5954ddc8de4760d38b5a/anterosXXXL_v10.safetensors |
-| | | Civitai v1.0 fp16 | https://civitai.com/api/download/models/479579 |
-| **Pony Diffusion V6 XL** | ponyDiffusionV6XL.safetensors + VAE | HuggingFace (preset pony_v6) | ver tabela acima |
-| **REED_XXX Illustrious v12** | reedXXXIllustrious_v120.safetensors | Civitai | https://civitai.com/api/download/models/2852255 |
-| **REED v14** *(opcional)* | reedXXXIllustrious_v140.safetensors | Civitai | https://civitai.com/api/download/models/2954011 |
+| Modelo | Arquivo no Colab | URL HuggingFace |
+|--------|------------------|-----------------|
+| **Lustify v4** | lustifySDXLNSFW_v40Alpha.safetensors | https://huggingface.co/xxxpo13/LUSTIFY_SDXL/resolve/main/lustifySDXLNSFWSFW_v40.safetensors |
+| **Juggernaut XL v9** | Juggernaut-XL_v9_RunDiffusionPhoto_v2.safetensors | https://huggingface.co/RunDiffusion/Juggernaut-XL-v9/resolve/main/Juggernaut-XL_v9_RunDiffusionPhoto_v2.safetensors |
+| **Epic Realism XL Pure Fix** | epicrealismXL_pureFix.safetensors | https://huggingface.co/123543o/124052/resolve/main/checkpoints/XL/epicrealismXL_pureFix.safetensors |
+| **Epic VX-FinalKiSS** *(opcional)* | epicrealismXL_vxFinalkiss.safetensors | https://huggingface.co/John6666/epicrealism-xl-v8kiss-sdxl/resolve/main/epicrealismXL_vx1Finalkiss.safetensors |
+| **Anteros XXXL** | anterosXXXL_v10.safetensors | https://huggingface.co/rosamelanopex/ModelsXL/resolve/e4d1f2bd7fd3078313bc5954ddc8de4760d38b5a/anterosXXXL_v10.safetensors |
+| **Pony Diffusion V6 XL** | ponyDiffusionV6XL.safetensors + VAE | ver tabela acima |
 
-### Lustify v4 no WebUI vs Colab
+### Notas sobre espelhos HF
 
-No A1111/WebUI o nome costuma ser `[SDXL] Lustify v4`. No Civitai a família **LUSTIFY!** inclui várias versões; o notebook usa **v4.0 alpha** (`926965`) por alinhar ao pedido “v4”. Para a build mais nova, ative `DOWNLOAD_LUSTIFY_APEX_V8 = True` (APEX V8, `2808677`).
+- **Lustify v4:** o ficheiro no HF chama-se `lustifySDXLNSFWSFW_v40.safetensors` (repo `xxxpo13/LUSTIFY_SDXL`); no Colab é guardado como `lustifySDXLNSFW_v40Alpha.safetensors` para o preset `lustify_v4`.
+- **Epic vxFinalkiss:** espelho `epicrealismXL_vx1Finalkiss` (variante próxima no mesmo repositório John6666).
+- Repositórios NSFW no HF podem pedir confirmação de idade na conta.
 
-Espelho HF (pode exigir aceitar conteúdo sensível na conta): [John6666/lustify-sdxl-nsfwsfw-v4-sdxl](https://huggingface.co/John6666/lustify-sdxl-nsfwsfw-v4-sdxl) — sem URL `resolve` estável listada aqui; prefira Civitai.
+## Sem download automático (upload manual)
 
-## Download manual (modelo sem URL estável)
+| Modelo | Arquivo | Motivo |
+|--------|---------|--------|
+| **REED Illustrious v12** | reedXXXIllustrious_v120.safetensors | Sem checkpoint `.safetensors` único no HF (só Civitai / diffusers fragmentado) |
+| **REED v14** *(opcional)* | reedXXXIllustrious_v140.safetensors | Idem |
+| **Lustify APEX v8** *(opcional)* | lustifySDXLNSFW_apexV8.safetensors | Sem espelho HF de checkpoint completo (só variantes quantizadas para NPU) |
 
-1. Abra o modelo no Civitai → aba da versão → botão **Download** → copie o link da API (`/api/download/models/{id}`).
-2. Na célula opcional do notebook:
+Coloque o ficheiro em `/content/Fooocus/models/checkpoints/` ou use a célula opcional com uma URL `resolve/main` se encontrar um espelho.
+
+## Download manual (célula opcional)
 
 ```python
-MANUAL_URL = "https://civitai.com/api/download/models/SEU_ID"
+MANUAL_URL = "https://huggingface.co/SEU_REPO/resolve/main/modelo.safetensors"
 MANUAL_FILENAME = "nome_do_arquivo.safetensors"
 ```
-
-3. Com token, se necessário: `?token=...` ou `CIVITAI_TOKEN` já configurado.
 
 **Exemplo wget no terminal Colab:**
 
 ```bash
-wget -c --content-disposition -O /content/Fooocus/models/checkpoints/modelo.safetensors \
-  "https://civitai.com/api/download/models/ID?token=SEU_TOKEN"
+wget -c -O /content/Fooocus/models/checkpoints/modelo.safetensors \
+  "https://huggingface.co/REPO/resolve/main/modelo.safetensors"
 ```
 
 ## Onde os ficheiros ficam
@@ -112,25 +114,31 @@ O Fooocus também baixa na primeira execução (expansion, inpaint, controlnet, 
 
 | Variável | Default | Efeito |
 |----------|---------|--------|
-| `DOWNLOAD_ALL_PRESET_MODELS` | True | Todos os URLs em `presets/*.json` |
-| `DOWNLOAD_NSFW_EXTRAS` | True | Pacote dos 6 modelos + Pony |
-| `DOWNLOAD_LUSTIFY_APEX_V8` | False | + Lustify APEX v8 |
-| `DOWNLOAD_EPIC_VX_FINALKISS` | True | + epicrealismXL_vxFinalkiss |
-| `DOWNLOAD_REED_V14` | False | + reed v14 em vez de só v12 |
+| `DOWNLOAD_ALL_PRESET_MODELS` | True | Todos os URLs HF em `presets/*.json` |
+| `DOWNLOAD_NSFW_EXTRAS` | True | Pacote dos 6 modelos + Pony (sem REED) |
+| `DOWNLOAD_LUSTIFY_APEX_V8` | False | Aviso: sem HF; upload manual |
+| `DOWNLOAD_EPIC_VX_FINALKISS` | True | + epic vxFinalkiss (espelho vx1Finalkiss) |
+| `DOWNLOAD_REED_V14` | False | Aviso: sem HF; upload manual |
 | `FOOOCUS_PRESET` | default | Preset ao subir a UI |
 
-## Páginas Civitai (referência)
+## Referência Civitai (só para identificar versões)
 
 - Lustify: https://civitai.com/models/573152
 - Juggernaut XL: https://civitai.com/models/133005
 - epiCRealism XL: https://civitai.com/models/277058
-- Anteros XXXL: https://civitai.com/models/430454 (conteúdo maduro)
+- Anteros XXXL: https://civitai.com/models/430454
 - Pony V6 XL: https://civitai.com/models/257749
 - REED_XXX Illustrious: https://civitai.com/models/1717562
 
-## Ficheiros alterados neste workspace
+## Ficheiros deste workspace
 
-- `fooocus_colab.ipynb` — notebook Colab completo
+- `fooocus_colab.ipynb` — notebook Colab
 - `COLAB-MODELS.md` — este guia
-- `presets/lustify_v4.json`, `juggernaut_v9.json`, `epicrealism_xl.json`, `anteros_xxxl.json`, `reed_illustrious_v12.json`
+- `presets/lustify_v4.json`, `juggernaut_v9.json`, `epicrealism_xl.json`, `anteros_xxxl.json`, `reed_illustrious_v12.json`, `pony_v6.json`
 - `scripts/build_colab_notebook.py`, `scripts/_colab_download_cell.py` — geradores do notebook
+
+## Instrução após atualizar o repo
+
+1. Abra o [notebook no Colab](https://colab.research.google.com/github/Claytonc40/generate-image/blob/main/fooocus_colab.ipynb) (ou faça push de `fooocus_colab.ipynb` para `Claytonc40/generate-image`).
+2. **Re-execute a célula 2) Download** (e a de clone se o repo mudou).
+3. Se usar preset `reed_illustrious_v12`, faça upload manual do checkpoint antes de gerar imagens.
