@@ -11,7 +11,7 @@ Guia em português para o notebook `fooocus_colab.ipynb` no repositório [Clayto
 | 1 | **Configuração** | `FOOOCUS_PRESET = "lustify_v4"`; flags extras desligadas |
 | 2 | **Clone** | `git clone` → `/content/Fooocus`, cria pastas `models/` |
 | 3 | **Download** | Lustify v4 + vae_approx + prompt expansion (HF) |
-| 4 | **Iniciar** | `python entry_with_update.py --share --always-high-vram --preset lustify_v4` |
+| 4 | **Iniciar** | `python -u launch.py --share --always-high-vram --listen --preset lustify_v4` (sem git fetch) |
 | 5 | *(opcional)* | Upload manual de outros checkpoints (não baixados por padrão) |
 
 **Runtime:** GPU (T4 ou superior). **Disco desta célula:** ~10–15 GB (checkpoint ~6,7 GB + essenciais ~0,5–1 GB). PyTorch/deps e modelos sob demanda (controlnet, inpaint, IP-Adapter) somam mais se você usar esses recursos na UI.
@@ -48,7 +48,7 @@ Outros presets listados no menu vêm dos JSON no repo clonado, mas **sem checkpo
 
 ## Downloads sob demanda (primeira utilização na UI)
 
-O `entry_with_update.py` / Fooocus pode baixar quando você usa o recurso:
+O `launch.py` / Fooocus pode baixar quando você usa o recurso:
 
 - ControlNet (canny, CPDS)
 - Inpaint (v1 / v2.5 / v2.6)
