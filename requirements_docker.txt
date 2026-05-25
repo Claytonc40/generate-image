@@ -1,0 +1,7 @@
+torch==2.1.0
+torchvision==0.16.0
+# Pins para compatibilidade Gradio 3.41.2 (evita conflitos fastapi/starlette/pydantic)
+fastapi==0.104.1
+starlette==0.27.0
+pydantic==2.5.3
+pydantic-core==2.14.6

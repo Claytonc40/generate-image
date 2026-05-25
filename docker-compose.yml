@@ -1,0 +1,53 @@
+# Fooocus — Docker Compose (Windows/Linux)
+# Documentação completa: DOCKER-SETUP.md
+#
+# GPU: requer NVIDIA Container Toolkit. Sem GPU, comente o bloco "deploy" abaixo
+#      ou use: docker compose -f docker-compose.yml -f docker-compose.cpu.yml up
+
+services:
+  app:
+    build: .
+    image: ghcr.io/lllyasviel/fooocus
+    ports:
+      - "7865:7865"
+    environment:
+      - CMDARGS=--listen
+      - DATADIR=/content/data
+      - config_path=/content/data/config.txt
+      - config_example_path=/content/data/config_modification_tutorial.txt
+      # Paths simples (arrays path_checkpoints/path_loras ficam em docker/config.txt)
+      - path_embeddings=/content/data/models/embeddings/
+      - path_vae_approx=/content/data/models/vae_approx/
+      - path_vae=/content/data/models/vae/
+      - path_upscale_models=/content/data/models/upscale_models/
+      - path_inpaint=/content/data/models/inpaint/
+      - path_controlnet=/content/data/models/controlnet/
+      - path_clip_vision=/content/data/models/clip_vision/
+      - path_fooocus_expansion=/content/data/models/prompt_expansion/fooocus_expansion/
+      - path_safety_checker=/content/data/models/safety_checker/
+      - path_sam=/content/data/models/sam/
+      - path_outputs=/content/app/outputs/
+      # Modelo SDXL padrão (RealVis; fallback Juggernaut via previous_default_models)
+      - default_model=[SDXL] RealVis XL v5 - Fotorrealismo.safetensors
+      # Espelho Hugging Face (opcional, descomente se necessário)
+      # - HF_MIRROR=https://hf-mirror.com
+    volumes:
+      # Config Docker (paths Linux + default_model SDXL)
+      - ./docker/config.txt:/content/data/config.txt:ro
+      # Modelos Fooocus (checkpoints, loras, vae, controlnet, inpaint, etc.)
+      - d:/Apps/Fooocus/models:/content/data/models
+      # Saídas persistentes no host
+      - d:/Apps/Fooocus/outputs:/content/data/outputs
+      # Modelos SDXL do Automatic1111 WebUI (sincronização ao vivo, só leitura)
+      - d:/Apps/stable-diffusion-webui/models/Stable-diffusion:/content/data/models/checkpoints/webui-sdxl:ro
+      - d:/Apps/stable-diffusion-webui/models/Lora:/content/data/models/loras/webui-sdxl-loras:ro
+    tty: true
+    stdin_open: true
+  # GPU NVIDIA — comente todo o bloco "deploy" para CPU (ver DOCKER-SETUP.md)
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

@@ -1,0 +1,11 @@
+# Override sem GPU — usar com:
+#   docker compose -f docker-compose.yml -f docker-compose.cpu.yml up
+#
+# Remove reservas NVIDIA (modo CPU, muito lento para geração).
+
+services:
+  app:
+    deploy:
+      resources:
+        reservations:
+          devices: []

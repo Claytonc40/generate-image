@@ -1,0 +1,85 @@
+Update failed.
+unsupported URL protocol
+Update succeeded.
+[System ARGV] ['entry_with_update.py', '--always-cpu', '--listen', '127.0.0.1', '--port', '7865', '--disable-in-browser']
+Python 3.10.6 (tags/v3.10.6:9c7b4bd, Aug  1 2022, 21:53:49) [MSC v.1932 64 bit (AMD64)]
+Fooocus version: 2.5.5
+[Cleanup] Attempting to delete content of temp dir T:\Temp\fooocus
+[Cleanup] Cleanup successful
+Running on 64 CPU threads
+Total VRAM 130179 MB, total RAM 130179 MB
+Set vram state to: DISABLED
+Always offload VRAM
+Device: cpu
+VAE dtype: torch.float32
+Using sub quadratic optimization for cross attention, if you have memory or speed issues try using: --attention-split
+Refiner unloaded.
+Running on local URL:  http://127.0.0.1:7865
+model_type EPS
+UNet ADM Dimension 2816
+
+To create a public link, set `share=True` in `launch()`.
+Using split attention in VAE
+Working with z of shape (1, 4, 32, 32) = 4096 dimensions.
+Using split attention in VAE
+extra {'cond_stage_model.clip_l.text_projection', 'cond_stage_model.clip_l.logit_scale'}
+left over keys: dict_keys(['cond_stage_model.clip_l.transformer.text_model.embeddings.position_ids'])
+Base model loaded: D:\Apps\Fooocus\models\checkpoints\juggernautXL_v8Rundiffusion.safetensors
+VAE loaded: None
+Request to load LoRAs [('sd_xl_offset_example-lora_1.0.safetensors', 0.1)] for model [D:\Apps\Fooocus\models\checkpoints\juggernautXL_v8Rundiffusion.safetensors].
+Loaded LoRA [D:\Apps\Fooocus\models\loras\sd_xl_offset_example-lora_1.0.safetensors] for UNet [D:\Apps\Fooocus\models\checkpoints\juggernautXL_v8Rundiffusion.safetensors] with 788 keys at weight 0.1.
+Fooocus V2 Expansion: Vocab with 642 words.
+Fooocus Expansion engine loaded for cpu, use_fp16 = False.
+Requested to load SDXLClipModel
+Requested to load GPT2LMHeadModel
+Loading 2 new models
+Started worker with PID 22160
+App started successful. Use the app with http://127.0.0.1:7865/ or 127.0.0.1:7865
+Enter LCM mode.
+[Fooocus] Downloading LCM components ...
+Downloading: "https://huggingface.co/lllyasviel/misc/resolve/main/sdxl_lcm_lora.safetensors" to D:\Apps\Fooocus\models\loras\sdxl_lcm_lora.safetensors
+
+[Parameters] Adaptive CFG = 1.0
+[Parameters] CLIP Skip = 2
+[Parameters] Sharpness = 0.0
+[Parameters] ControlNet Softness = 0.25
+[Parameters] ADM Scale = 1.0 : 1.0 : 0.0
+[Parameters] Seed = 1011630034048497768
+[Parameters] CFG = 1.0
+[Fooocus] Loading control models ...
+[Parameters] Sampler = lcm - lcm
+[Parameters] Steps = 8 - 8
+[Fooocus] Initializing ...
+[Fooocus] Loading models ...
+Refiner unloaded.
+Request to load LoRAs [('sd_xl_offset_example-lora_1.0.safetensors', 0.1), ('sdxl_lcm_lora.safetensors', 1.0)] for model [D:\Apps\Fooocus\models\checkpoints\juggernautXL_v8Rundiffusion.safetensors].
+Loaded LoRA [D:\Apps\Fooocus\models\loras\sd_xl_offset_example-lora_1.0.safetensors] for UNet [D:\Apps\Fooocus\models\checkpoints\juggernautXL_v8Rundiffusion.safetensors] with 788 keys at weight 0.1.
+Loaded LoRA [D:\Apps\Fooocus\models\loras\sdxl_lcm_lora.safetensors] for UNet [D:\Apps\Fooocus\models\checkpoints\juggernautXL_v8Rundiffusion.safetensors] with 788 keys at weight 1.0.
+Requested to load SDXLClipModel
+Loading 1 new model
+unload clone 1
+[Fooocus] Processing prompts ...
+[Fooocus] Preparing Fooocus text #1 ...
+[Prompt Expansion] mulher, cinematic, intricate, elegant, highly detailed, sharp focus, inspired transparent glossy deep background, designed futuristic atmosphere, ambient light, dynamic dramatic bright colors, professional fine detail, set color, best, unique, vivid, great quality, creative, positive, innocent, beautiful, pure, rational, artistic, thought, perfect, full, hopeful, cute, spiritual
+[Fooocus] Preparing Fooocus text #2 ...
+[Prompt Expansion] mulher, cinematic, complex, highly detailed, sharp focus, glamorous, new, shiny, colorful, color, symmetry, radiant, light, attractive, pretty, marvelous, pure, thought, dramatic, background, open, lovely, charming, creative, pleasing, perfect, extremely coherent, ambient, intricate, beautiful, fine detail, epic, great composition, professional
+[Fooocus] Encoding positive #1 ...
+[Fooocus] Encoding positive #2 ...
+[Parameters] Denoising Strength = 1.0
+[Parameters] Initial Latent shape: Image Space (896, 1152)
+Preparation time: 9.10 seconds
+Using sgm_uniform scheduler.
+[Fooocus] Preparing task 1/2 ...
+[Sampler] refiner_swap_method = joint
+[Sampler] sigma_min = 0.39970144629478455, sigma_max = 14.614640235900879
+Requested to load SDXL
+Loading 1 new model
+[Fooocus Model Management] Moving model(s) has taken 6.36 seconds
+Requested to load AutoencoderKL
+Loading 1 new model
+[Fooocus] Saving image 1/2 to system ...
+Image generated with private log at: D:\Apps\Fooocus\outputs\2026-05-22\log.html
+Generating and saving time: 73.78 seconds
+[Fooocus] Preparing task 2/2 ...
+[Sampler] refiner_swap_method = joint
+[Sampler] sigma_min = 0.4367247521877289, sigma_max = 14.614640235900879
