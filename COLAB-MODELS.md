@@ -106,3 +106,22 @@ No workspace local (`presets/`) mantém-se pony, juggernaut, anteros, reed, etc.
 1. Abra o [notebook no Colab](https://colab.research.google.com/github/Claytonc40/generate-image/blob/main/fooocus_colab.ipynb).
 2. **Re-execute** Config → Clone → Download → Iniciar.
 3. Espere ~10–15 GB na célula Download antes de gerar imagens.
+
+## Problemas comuns — célula Iniciar
+
+### Notebook antigo (`entry_with_update.py`)
+
+Se a célula **3) Iniciar Fooocus** ainda mostra `python entry_with_update.py` (sem `SKIP_GIT_UPDATE` / `launch.py`), o Colab abriu uma versão em cache ou anterior ao push. **Solução:** abra o link Colab abaixo (repo atualizado), ou cole a célula correta da secção seguinte e reexecute **Config → Clone → Download → Iniciar**.
+
+### `entry_with_update.py` trava ou falha no Colab
+
+Esse script chama `remote.fetch()` via **pygit2** antes de importar `launch`. No Colab isso costuma:
+
+| Sintoma | Causa provável | O que fazer |
+|---------|----------------|-------------|
+| Célula “Iniciar” sem output por minutos | `git fetch` lento ou pendurado | Use `launch.py` com `SKIP_GIT_UPDATE = True` (notebook atual) |
+| `Update failed` + mensagem pygit2 / SSL | Rede Colab ou validação Git | Idem — não precisa de fetch após `git clone` na célula 1 |
+| `Failed to connect to github.com` | Firewall / instabilidade | Reexecute Clone; depois Iniciar com `launch.py` |
+| `pygit2` ImportError | pip da célula 1 não rodou | Reexecute célula **1) Clone** (`pip install pygit2==1.15.1`) |
+
+O clone raso (`--depth 1`) já traz o código necessário; **não** é obrigatório atualizar de novo no Colab antes de subir o Gradio.
