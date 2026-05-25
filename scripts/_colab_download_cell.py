@@ -146,6 +146,9 @@ if DOWNLOAD_NSFW_EXTRAS:
     if DOWNLOAD_REED_V14:
         ckpt_map["reedXXXIllustrious_v140.safetensors"] = NSFW_OPTIONAL["reedXXXIllustrious_v140.safetensors"]
 
+if not DOWNLOAD_EPIC_VX_FINALKISS:
+    ckpt_map.pop("epicrealismXL_vxFinalkiss.safetensors", None)
+
 if not DOWNLOAD_ALL_PRESET_MODELS:
     keep = set(NSFW_EXTRA_CHECKPOINTS.keys())
     ckpt_map = {k: v for k, v in ckpt_map.items() if k in keep}
