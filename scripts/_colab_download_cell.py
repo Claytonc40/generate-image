@@ -1,4 +1,4 @@
-# @title 2) Download de modelos (presets + SDXL extras)
+# @title 2) Download de modelos (Lustify v4 + essenciais Fooocus)
 import json
 import os
 import subprocess
@@ -8,6 +8,48 @@ from pathlib import Path
 # Tamanho mínimo para checkpoints SDXL (~100 MB; Civitai sem token devolvia HTML ~0 GB)
 MIN_CHECKPOINT_BYTES = 100_000_000
 MIN_VAE_BYTES = 10_000_000
+MIN_SMALL_FILE_BYTES = 100_000
+
+# Colab ~114 GB: só lustify + auxiliares que o launch baixa na 1ª execução
+PRESET_FILES_FOR_DOWNLOAD = ("lustify_v4.json",)
+
+HF_LUSTIFY_V40 = (
+    "https://huggingface.co/xxxpo13/LUSTIFY_SDXL/resolve/main/lustifySDXLNSFWSFW_v40.safetensors"
+)
+
+EMBEDDED_PRESETS = {
+    "lustify_v4.json": {
+        "default_model": "lustifySDXLNSFW_v40Alpha.safetensors",
+        "default_styles": ["Fooocus V2", "Fooocus Photograph"],
+        "checkpoint_downloads": {
+            "lustifySDXLNSFW_v40Alpha.safetensors": HF_LUSTIFY_V40,
+        },
+    },
+}
+
+# vae_approx + prompt expansion (launch.py também baixa; pré-fetch evita surpresa de disco)
+FOOOCUS_LAUNCH_ESSENTIALS = [
+    (
+        "models/vae_approx/xlvaeapp.pth",
+        "https://huggingface.co/lllyasviel/misc/resolve/main/xlvaeapp.pth",
+        MIN_SMALL_FILE_BYTES,
+    ),
+    (
+        "models/vae_approx/vaeapp_sd15.pth",
+        "https://huggingface.co/lllyasviel/misc/resolve/main/vaeapp_sd15.pt",
+        MIN_SMALL_FILE_BYTES,
+    ),
+    (
+        "models/vae_approx/xl-to-v1_interposer-v4.0.safetensors",
+        "https://huggingface.co/mashb1t/misc/resolve/main/xl-to-v1_interposer-v4.0.safetensors",
+        MIN_SMALL_FILE_BYTES,
+    ),
+    (
+        "models/prompt_expansion/fooocus_expansion/pytorch_model.bin",
+        "https://huggingface.co/lllyasviel/misc/resolve/main/fooocus_expansion.bin",
+        MIN_SMALL_FILE_BYTES,
+    ),
+]
 
 
 def download_one(url: str, dest: str, min_bytes: int = MIN_CHECKPOINT_BYTES):
@@ -42,105 +84,22 @@ def download_one(url: str, dest: str, min_bytes: int = MIN_CHECKPOINT_BYTES):
     print(f"  ok ({size / 1e9:.2f} GB)")
 
 
-def collect_preset_downloads(presets_dir: str):
+def collect_preset_downloads(presets_dir: str, only_names=PRESET_FILES_FOR_DOWNLOAD):
     ckpt, lora, vae = {}, {}, {}
-    for p in Path(presets_dir).glob("*.json"):
+    for name in only_names:
+        p = Path(presets_dir) / name
+        if not p.is_file():
+            continue
         try:
             data = json.loads(p.read_text(encoding="utf-8"))
         except Exception as e:
-            print("preset ignorado", p.name, e)
+            print("preset ignorado", name, e)
             continue
         ckpt.update(data.get("checkpoint_downloads", {}))
         lora.update(data.get("lora_downloads", {}))
         vae.update(data.get("vae_downloads", {}))
     return ckpt, lora, vae
 
-
-HF_LUSTIFY_V40 = (
-    "https://huggingface.co/xxxpo13/LUSTIFY_SDXL/resolve/main/lustifySDXLNSFWSFW_v40.safetensors"
-)
-HF_EPIC_PUREFIX = (
-    "https://huggingface.co/123543o/124052/resolve/main/checkpoints/XL/epicrealismXL_pureFix.safetensors"
-)
-HF_EPIC_VXFINALKISS = (
-    "https://huggingface.co/John6666/epicrealism-xl-v8kiss-sdxl/resolve/main/"
-    "epicrealismXL_vx1Finalkiss.safetensors"
-)
-
-EMBEDDED_PRESETS = {
-    "pony_v6.json": {
-        "default_model": "ponyDiffusionV6XL.safetensors",
-        "default_styles": ["Fooocus Pony"],
-        "checkpoint_downloads": {
-            "ponyDiffusionV6XL.safetensors": (
-                "https://huggingface.co/mashb1t/fav_models/resolve/main/fav/ponyDiffusionV6XL.safetensors"
-            ),
-        },
-        "vae_downloads": {
-            "ponyDiffusionV6XL_vae.safetensors": (
-                "https://huggingface.co/mashb1t/fav_models/resolve/main/fav/ponyDiffusionV6XL_vae.safetensors"
-            ),
-        },
-    },
-    "lustify_v4.json": {
-        "default_model": "lustifySDXLNSFW_v40Alpha.safetensors",
-        "checkpoint_downloads": {
-            "lustifySDXLNSFW_v40Alpha.safetensors": HF_LUSTIFY_V40,
-        },
-    },
-    "juggernaut_v9.json": {
-        "default_model": "Juggernaut-XL_v9_RunDiffusionPhoto_v2.safetensors",
-        "checkpoint_downloads": {
-            "Juggernaut-XL_v9_RunDiffusionPhoto_v2.safetensors": (
-                "https://huggingface.co/RunDiffusion/Juggernaut-XL-v9/resolve/main/"
-                "Juggernaut-XL_v9_RunDiffusionPhoto_v2.safetensors"
-            ),
-        },
-    },
-    "epicrealism_xl.json": {
-        "default_model": "epicrealismXL_pureFix.safetensors",
-        "checkpoint_downloads": {
-            "epicrealismXL_pureFix.safetensors": HF_EPIC_PUREFIX,
-            "epicrealismXL_vxFinalkiss.safetensors": HF_EPIC_VXFINALKISS,
-        },
-    },
-    "anteros_xxxl.json": {
-        "default_model": "anterosXXXL_v10.safetensors",
-        "checkpoint_downloads": {
-            "anterosXXXL_v10.safetensors": (
-                "https://huggingface.co/rosamelanopex/ModelsXL/resolve/"
-                "e4d1f2bd7fd3078313bc5954ddc8de4760d38b5a/anterosXXXL_v10.safetensors"
-            ),
-        },
-    },
-    "reed_illustrious_v12.json": {
-        "default_model": "reedXXXIllustrious_v120.safetensors",
-        "checkpoint_downloads": {},
-    },
-}
-
-NSFW_EXTRA_CHECKPOINTS = {
-    "lustifySDXLNSFW_v40Alpha.safetensors": HF_LUSTIFY_V40,
-    "Juggernaut-XL_v9_RunDiffusionPhoto_v2.safetensors": (
-        "https://huggingface.co/RunDiffusion/Juggernaut-XL-v9/resolve/main/"
-        "Juggernaut-XL_v9_RunDiffusionPhoto_v2.safetensors"
-    ),
-    "epicrealismXL_pureFix.safetensors": HF_EPIC_PUREFIX,
-    "anterosXXXL_v10.safetensors": (
-        "https://huggingface.co/rosamelanopex/ModelsXL/resolve/"
-        "e4d1f2bd7fd3078313bc5954ddc8de4760d38b5a/anterosXXXL_v10.safetensors"
-    ),
-    "ponyDiffusionV6XL.safetensors": (
-        "https://huggingface.co/mashb1t/fav_models/resolve/main/fav/ponyDiffusionV6XL.safetensors"
-    ),
-}
-
-# Sem espelho HF de checkpoint único (só Civitai / diffusers fragmentado)
-MANUAL_ONLY_CHECKPOINTS = {
-    "reedXXXIllustrious_v120.safetensors",
-    "reedXXXIllustrious_v140.safetensors",
-    "lustifySDXLNSFW_apexV8.safetensors",
-}
 
 presets_path = os.path.join(FOOOCUS_DIR, "presets")
 Path(presets_path).mkdir(parents=True, exist_ok=True)
@@ -152,14 +111,13 @@ for name, body in EMBEDDED_PRESETS.items():
             "default_refiner": "None",
             "default_refiner_switch": 0.5,
             "default_loras": [[True, "None", 1.0]] * 5,
-            "default_cfg_scale": 7.0,
+            "default_cfg_scale": 4.0,
             "default_sample_sharpness": 2.0,
             "default_sampler": "dpmpp_2m_sde_gpu",
             "default_scheduler": "karras",
             "default_performance": "Speed",
             "default_prompt": "",
             "default_prompt_negative": "",
-            "default_styles": ["Fooocus V2"],
             "default_aspect_ratio": "896*1152",
             "default_overwrite_step": -1,
             "embeddings_downloads": {},
@@ -169,34 +127,16 @@ for name, body in EMBEDDED_PRESETS.items():
         p.write_text(json.dumps(full, indent=4), encoding="utf-8")
         print("preset escrito:", name)
 
+if DOWNLOAD_ALL_PRESET_MODELS or DOWNLOAD_NSFW_EXTRAS:
+    print(
+        "[aviso] DOWNLOAD_ALL_PRESET_MODELS / DOWNLOAD_NSFW_EXTRAS ignorados: "
+        "Colab lustify-only (~10-15 GB)."
+    )
+
 ckpt_map, lora_map, vae_map = collect_preset_downloads(presets_path)
 
-if DOWNLOAD_NSFW_EXTRAS:
-    ckpt_map.update(NSFW_EXTRA_CHECKPOINTS)
-    if DOWNLOAD_LUSTIFY_APEX_V8:
-        print(
-            "[aviso] lustifySDXLNSFW_apexV8: sem URL HF de checkpoint único; "
-            "use upload manual (COLAB-MODELS.md)."
-        )
-    if DOWNLOAD_REED_V14:
-        print(
-            "[aviso] reedXXXIllustrious_v140: sem URL HF; use upload manual."
-        )
-
-if not DOWNLOAD_EPIC_VX_FINALKISS:
-    ckpt_map.pop("epicrealismXL_vxFinalkiss.safetensors", None)
-
-if not DOWNLOAD_ALL_PRESET_MODELS:
-    keep = set(NSFW_EXTRA_CHECKPOINTS.keys())
-    ckpt_map = {k: v for k, v in ckpt_map.items() if k in keep}
-    lora_map = {}
-    vae_map = {k: v for k, v in vae_map.items() if "pony" in k.lower()}
-
-for name in sorted(MANUAL_ONLY_CHECKPOINTS):
-    if name in ckpt_map and ckpt_map[name] and "civitai.com" in ckpt_map[name]:
-        ckpt_map.pop(name, None)
-
 print("Checkpoints:", len(ckpt_map), "| Loras:", len(lora_map), "| VAE:", len(vae_map))
+print("Essenciais launch:", len(FOOOCUS_LAUNCH_ESSENTIALS))
 
 failed = []
 for fname, url in sorted(ckpt_map.items()):
@@ -220,17 +160,16 @@ for fname, url in sorted(vae_map.items()):
         print(f"  ERRO {fname}: {e}")
         failed.append(fname)
 
+for rel_path, url, min_b in FOOOCUS_LAUNCH_ESSENTIALS:
+    dest = os.path.join(FOOOCUS_DIR, rel_path)
+    try:
+        download_one(url, dest, min_bytes=min_b)
+    except Exception as e:
+        print(f"  ERRO {rel_path}: {e}")
+        failed.append(rel_path)
+
 if failed:
     print("\nFalharam:", ", ".join(failed))
     sys.exit(1)
 
-if "reed_illustrious_v12" in FOOOCUS_PRESET and not os.path.isfile(
-    os.path.join(CHECKPOINT_DIR, "reedXXXIllustrious_v120.safetensors")
-):
-    print(
-        "\n[aviso] Preset reed_illustrious_v12 sem download automático: "
-        "faça upload manual de reedXXXIllustrious_v120.safetensors "
-        f"em {CHECKPOINT_DIR}"
-    )
-
-print("Concluido.")
+print("Concluido (lustify + essenciais). Controlnet/inpaint baixam sob demanda na UI.")
