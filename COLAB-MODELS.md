@@ -125,3 +125,31 @@ Esse script chama `remote.fetch()` via **pygit2** antes de importar `launch`. No
 | `pygit2` ImportError | pip da célula 1 não rodou | Reexecute célula **1) Clone** (`pip install pygit2==1.15.1`) |
 
 O clone raso (`--depth 1`) já traz o código necessário; **não** é obrigatório atualizar de novo no Colab antes de subir o Gradio.
+
+### `ImportError: Failed to import CuPy` / `numpy.core.multiarray failed to import`
+
+Ao subir o Fooocus, o `launch.py` importa `rembg` → `pymatting` → (opcional) `cupy`. No Colab com **Python 3.12**, o runtime costuma ter **NumPy 2.x** e **cupy-cuda12x** pré-instalados incompatíveis entre si. O CuPy quebra ao importar; o `pymatting` 1.1.15+ só ignora `ModuleNotFoundError`, não esse `ImportError`.
+
+| Sintoma | Causa | O que fazer |
+|---------|-------|-------------|
+| Trace em `extras/inpaint_mask.py` → `rembg` → `pymatting` → `cupy` | NumPy/CuPy do Colab vs `requirements_versions.txt` | Reexecute a célula **1) Clone** do notebook atual (fix automático) |
+| Mesmo erro após atualizar o repo | Notebook em cache / célula Clone antiga | Abra o [notebook no Colab](https://colab.research.google.com/github/Claytonc40/generate-image/blob/main/fooocus_colab.ipynb) e rode **Config → Clone → Download → Iniciar** |
+
+A célula **1) Clone** do notebook gerado faz, após o `git clone`:
+
+1. `pip uninstall` de `cupy` / `cupy-cuda*`
+2. `numpy==1.26.4` (pin do `requirements_versions.txt`, compatível com torch 2.1)
+3. `pip install -r requirements_versions.txt`
+4. `pip uninstall` de cupy outra vez (evita reinstalação pelo ambiente Colab)
+5. `rembg==2.0.57` + `pymatting==1.1.8` (versão sem import CuPy obrigatório no `foreground`)
+
+**Fix manual** (se precisar colar numa célula extra antes de Iniciar):
+
+```python
+!pip uninstall -y cupy cupy-cuda12x cupy-cuda11x 2>/dev/null | true
+!pip install -q --force-reinstall "numpy==1.26.4" "rembg==2.0.57" "pymatting==1.1.8"
+```
+
+Alternativa reportada na comunidade Fooocus: `numpy<2` + reinstalar `cupy-cuda12x` alinhado ao CUDA do runtime — só use se quiser GPU no pymatting; no Colab o inpaint/rembg em CPU é suficiente.
+
+**Não** é necessário `Runtime → Restart` se você reexecutar Clone **antes** de Iniciar na mesma sessão (as deps ficam corretas para essa sessão).
